@@ -1,0 +1,11 @@
+<div class="organization">{{organizationName}}</div>
+
+<div>{{boardName}}</div>
+<div class="list">
+	{{#each cards}}
+	<div class="card">
+		<div class="cardTitle"><a href="{{this.shortUrl}}">{{this.name}}</a></div>
+		<div class="cardDesc">{{this.desc}}</div>
+	</div>
+	{{/each}}
+</div>

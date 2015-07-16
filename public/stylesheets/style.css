@@ -1,0 +1,29 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.organization{
+	
+}
+
+.list{
+	/* border: 1px solid #000; */
+}
+
+.card{
+	margin: 5px 0px;
+	font-family: Arial;
+}
+
+.cardTitle {
+	font-size: 20px;
+}
+
+.cardDesc{
+	font-size: 15px;
+}
