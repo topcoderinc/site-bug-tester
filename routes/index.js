@@ -10,6 +10,9 @@ var router=express.Router();
 
 var Report=require('../model/Report.js');
 var TrelloProcessor=require('../trelloProcessor.js');
+var tp=new TrelloProcessor();
+
+var authRedirectPath='/oauth/authredirect';
 
 router.param('boardId', function(req, res, next, boardId) {
 	req.boardId=boardId;
@@ -20,7 +23,12 @@ router.param('boardId', function(req, res, next, boardId) {
 /* GET home page. */
 router.get('/me', function(req, res, next) {
 	var list=(req.query.list?req.query.list:'Done');
-	var tp=new TrelloProcessor();
+
+	if(tp.isAuthorized!=true){
+		//var tp=new TrelloProcessor().initTrello();
+		res.redirect('/oauth?landing=/me');
+		return;
+	}
 
 	var listFilter=list; //CWD-- temp
 	var template='card'; //CWD-- temp
@@ -42,6 +50,35 @@ router.get('/me', function(req, res, next) {
 			}
 		}
 	});
+});
+
+router.get('/oauth',function(req,res,next){
+	var landing=(req.query.landing || '/');
+	tp.oAuthTrello(req.protocol+'://'+req.headers.host+req.baseUrl+authRedirectPath+'?landing='+landing);	
+	tp.getRequestToken(function(err,redirectURL){
+		if(err){
+			res.status(500).json(err);
+		} else {
+			//res.json(redirectURL);
+			console.log('redirecting to:',redirectURL);
+			res.redirect(redirectURL);
+		}
+	});
+});
+
+router.get(authRedirectPath,function(req,res){
+	var landing=(req.query.landing || '/');
+	console.log('calling for access token: ',req.query.oauth_verifier);
+	tp.getAccessToken(req.query.oauth_verifier, function(err,data){
+		if(err){
+			console.log(err);
+			res.status(500).json(err);
+		} else {
+			//res.json(data);
+			res.redirect(landing);
+		}
+	});
+	
 });
 
 router.post('/jobs', function(req, res, next) {
