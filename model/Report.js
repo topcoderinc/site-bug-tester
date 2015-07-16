@@ -20,11 +20,6 @@ var ReportSchema = new Schema({
     required: true,
     trim: true
   },
-  organizationId: {
-    type: String,
-    required: true,
-    trim: true
-  },
   boardIds: [{ type : String }],
   lists: [ { type : String } ],
   accessKey: {
@@ -42,9 +37,6 @@ var ReportSchema = new Schema({
 /**
  * Validations
  */
-ReportSchema.path('organizationId').validate(function (id) {
-  return !!id;
-}, 'organizationId cannot be blank');
 
 ReportSchema.path('boardIds').validate(function (boardIds) {
   return _.isArray(boardIds);
