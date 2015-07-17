@@ -15,6 +15,11 @@ var ReportSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  emailRecipient:{
+    type: String,
+    required: true,
+    trim: true
+  },
   name: {
     type: String,
     required: true,

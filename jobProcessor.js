@@ -26,7 +26,7 @@ mongoose.connection.on('connected', function() {
 
 
 var processBoard=function(key,token,reportId,boardId,lists,done){
-	console.log('processing board: ',boardId,'/',lists,' for reportId: ',reportId);
+	console.log('processing board: ',boardId,'/',lists,' for reportId: ',reportId,'(',key,'/',token,')');
 	/* CWD--  
 		- fetch data from trello
 		- shove into mongo
@@ -35,7 +35,7 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 	if(key && token) {
 		var tp=new TrelloProcessor(key,token);
 		tp.getCards(boardId,function(err,results){
-			console.log(results);
+			//console.log(results);
 
 			if(err) {
 				console.log(err);
@@ -60,7 +60,7 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 				});
 
 				if(cards.length>0) {
-					console.log('inserting cards',cards);
+					console.log('inserting cards');
 /*
 //CWD-- this won't work with new Card(). 
 //CWD-- Instead the raw card back from trello must be used. This is a bummer as it doesn't subscribe to the schema exactly.
@@ -77,8 +77,10 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 						card.save(function(err,doc){
 							if(err){
 								console.log(err);
+								done(err);
 							} else {
-								console.log('saved doc',doc);
+								console.log('saved card',doc._id);
+								done(null,doc);
 							}
 						});
 					});
@@ -86,48 +88,70 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 
 				} else {
 					console.log('no cards found!');
+					done();
 				}
 				
 			}
 		});
 	} else {
 		console.log('skipping board job due to lack of trello creds',reportId,'/',boardId);
+		done();
 	}
-
-	done();
 };
 
-var processReport=function(report,done){
-	var rpt=new Report(report);
+var sendEmail=function(result){
+	console.log('sending email: ',result);
+};
+
+var processReport=function(job,done){
+	var rpt=new Report(job.data);
 	console.log('proccessing report: ',rpt);
 
 	rpt.save(function (err,doc) {
 		if(err) {
 			console.log('error while saving report:',rpt,err);
 		} else {
+			var boardCompleteCount=0;
+			var boardsCount=doc.boardIds.length;
+
 			_.forEach(doc.boardIds,function(boardId){ //loop through board list and create jobs
 				var boardJob=queue.create('board',{ 
-						boardId: boardId, 
-						reportId: doc._id,
-						lists: doc.lists,
-						apiKey: doc.accessKey,
-						accessToken: doc.accessToken
-					}).save(function(err){
-						if(err) {
-							console.log(err);
-						} else {
-							console.log( boardJob.id );
-						}
-					});
-			});
+					boardId: boardId, 
+					reportId: doc._id,
+					lists: doc.lists,
+					apiKey: doc.accessKey,
+					accessToken: doc.accessToken
+				}).save(function(err){
+					if(err) {
+						console.log(err);
+						done(err);
+					} else {
+						console.log('saved board job:', boardJob.id);
+					}
+				});
 
-			done();
+				boardJob.on('complete',function(result){
+					++boardCompleteCount;
+console.log('boardCompleteCount/boardsCount:',boardCompleteCount,boardsCount);
+					if(boardCompleteCount===boardsCount){
+						console.log('done with job!');
+						done(null,doc);
+					}
+				});
+
+				//CWD-- really should handle failures here too so we don't have zombies
+			});
 		}
 	});
 };
 
 queue.process('report', function(job, done){
-	processReport(job.data, done);
+	job.on('complete', function(result){
+		console.log('Job completed with data ', result);
+		sendEmail(result);
+	});
+
+	processReport(job, done);
 });
 
 queue.process('board', function(job, done){

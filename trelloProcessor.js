@@ -17,7 +17,7 @@ function TrelloProcessor(key,token){
 	self.bag.api_token='';
 
 	if(key && token) {
-		self.trello=self.initTrello(key,token);
+		self.initTrello(key,token);
 	}
 }
 
@@ -80,7 +80,9 @@ TrelloProcessor.prototype.getAccessToken=function(oauth_verifier,callback) {
 }
 
 TrelloProcessor.prototype.getData=function(route,data,callback){
+console.log('calling out to trello: ',route,data);
 	this.trello.get(route,data,function(err,results){
+		console.log(err);
 		if(callback instanceof Function){
 			callback(err,results);
 		}

@@ -14,18 +14,12 @@ var tp=new TrelloProcessor();
 
 var authRedirectPath='/oauth/authredirect';
 
-router.param('boardId', function(req, res, next, boardId) {
-	req.boardId=boardId;
-	next();
-});
-
 
 /* GET home page. */
 router.get('/me', function(req, res, next) {
 	var list=(req.query.list?req.query.list:'Done');
 
-	if(tp.isAuthorized!=true){
-		//var tp=new TrelloProcessor().initTrello();
+	if(!tp.isAuthorized){
 		res.redirect('/oauth?landing=/me');
 		return;
 	}
@@ -82,8 +76,16 @@ router.get(authRedirectPath,function(req,res){
 });
 
 router.post('/jobs', function(req, res, next) {
+	if(!tp.isAuthorized){
+		res.status(500).json({ error: 'no oAuth tokens' });
+		return;
+	}
+
+
 	var rpt=new Report(req.body);
 	rpt.lists=['Done']; //CWD-- hard coding for now
+	rpt.accessKey=tp.bag.api_key;
+	rpt.accessToken=tp.bag.oauth_access_token;
 
 	rpt.validate(function(err) { 
 		if(err){
