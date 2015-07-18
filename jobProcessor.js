@@ -108,38 +108,27 @@ var processReport=function(job,done){
 	rpt.save(function (err,doc) {
 		if(err) {
 			console.log('error while saving report:',rpt,err);
+			done(err);
 		} else {
 			var boardCompleteCount=0;
 			var boardsCount=doc.boardIds.length;
 
 			_.forEach(doc.boardIds,function(boardId){ //loop through board list and create jobs
-				var boardJob=queue.create('board',{ 
-					boardId: boardId, 
-					reportId: doc._id,
-					lists: doc.lists,
-					apiKey: doc.accessKey,
-					accessToken: doc.accessToken
-				}).save(function(err){
+				processBoard(doc.accessKey,doc.accessToken,doc._id,boardId,doc.lists,function(err,result){
+					++boardCompleteCount;
+
 					if(err) {
 						console.log(err);
 						done(err);
+						return;
 					} else {
-						console.log('saved board job:', boardJob.id);
+						job.progress(boardCompleteCount,boardsCount);
+						console.log('saved board:', boardId);
 					}
 				});
-
-				boardJob.on('complete',function(result){
-					++boardCompleteCount;
-					job.progress(boardCompleteCount,boardsCount,result);
-console.log('boardCompleteCount/boardsCount:',boardCompleteCount,boardsCount);
-					if(boardCompleteCount===boardsCount){
-						console.log('done with job!',done);
-						//job.complete(function(){ done(null,doc) });
-					}
-				});
-
-				//CWD-- really should handle failures here too so we don't have zombies
 			});
+
+			done(null,doc);
 		}
 	});
 };
@@ -151,9 +140,4 @@ queue.process('report', function(job, done){
 	});
 
 	processReport(job, done);
-});
-
-queue.process('board', function(job, done){
-	var data=job.data;
-	processBoard(data.apiKey,data.accessToken,data.reportId,data.boardId,data.lists,done);
 });

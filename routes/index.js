@@ -101,13 +101,15 @@ router.post('/jobs', function(req, res, next) {
 		if(err){
 			res.status(500).json(err);
 		} else {
-			var job = queue.create('report',rpt).removeOnComplete(false).save( function(err){
+			var job = queue.create('report',rpt).removeOnComplete(true).save( function(err){
 				if(err) {
 					console.log(err);
 				} else {
 					console.log('posted report job: ',job.id );
 				}
 			});
+
+			job.on('complete', function(result){ console.log('wtf',result); });
 
 			res.json(job);
 		}		
