@@ -109,6 +109,10 @@ router.post('/jobs', function(req, res, next) {
 				}
 			});
 
+			job.on('complete',function(result){
+				console.log('job done!',result);
+			});
+
 			res.json(job);
 		}		
 	});

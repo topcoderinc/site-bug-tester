@@ -133,8 +133,8 @@ var processReport=function(job,done){
 					job.progress(boardCompleteCount,boardsCount,result);
 console.log('boardCompleteCount/boardsCount:',boardCompleteCount,boardsCount);
 					if(boardCompleteCount===boardsCount){
-						console.log('done with job!',done);
-						//job.complete(function(){ done(null,doc) });
+						console.log('done with report job!');
+						done(null,doc);
 					}
 				});
 
