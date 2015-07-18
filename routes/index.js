@@ -62,6 +62,11 @@ router.get('/oauth',function(req,res,next){
 });
 
 router.get(authEndPath,function(req,res,next){
+	if(!tp.isAuthorized){
+		res.redirect('/oauth');
+		return;
+	}
+
 	res.json({ msg: 'oAuth success!'});
 });
 
