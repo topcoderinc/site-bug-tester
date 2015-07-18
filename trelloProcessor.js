@@ -48,13 +48,13 @@ TrelloProcessor.prototype.getRequestToken=function(callback){
 
 	self.oAuth.getRequestToken(function(err,data){
 		if(err){
-			callback(err);
+			if(callback instanceof Function){ callback(err); }
 		} else {
 			console.log(data);
 			self.bag.oauth_token=data.oauth_token;
 			self.bag.oauth_token_secret=data.oauth_token_secret;
 			self.bag.auth_redirect=data.redirect;
-			callback(null,self.bag.auth_redirect);
+			if(callback instanceof Function){ callback(null,self.bag.auth_redirect); }
 		}
 	});
 };
@@ -68,24 +68,22 @@ TrelloProcessor.prototype.getAccessToken=function(oauth_verifier,callback) {
 		console.log(data);
 		if(err) {
 			console.log(err);
-			callback(err);
+			if(callback instanceof Function){ callback(err); }
 		} else {
 			self.bag.oauth_access_token=data.oauth_access_token;
 			self.bag.oauth_access_token_secret=data.oauth_access_token_secret;
 			self.initTrello(self.bag.api_key,self.bag.oauth_access_token);
 			self.isAuthorized=true;
-			callback(null,self.bag);
+			if(callback instanceof Function){ callback(null,self.bag); }
 		}
 	});
-}
+};
 
 TrelloProcessor.prototype.getData=function(route,data,callback){
-console.log('calling out to trello: ',route,data);
+	console.log('calling out to trello: ',route,data);
 	this.trello.get(route,data,function(err,results){
-		console.log(err);
-		if(callback instanceof Function){
-			callback(err,results);
-		}
+		if(err){ console.log(err); }
+		if(callback instanceof Function){ callback(err,results); }
 	});
 };
 
