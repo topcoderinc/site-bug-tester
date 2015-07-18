@@ -56,7 +56,7 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 					var c=new Card(card); //CWD-- this won't work with Card.collection.insert()
 					c.report=reportId;
 					cards.push(c);
-					console.log(c);
+					console.log(c._id,c.name);
 				});
 
 				if(cards.length>0) {
@@ -84,8 +84,6 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 							}
 						});
 					});
-
-
 				} else {
 					console.log('no cards found!');
 					done();
@@ -105,7 +103,7 @@ var sendEmail=function(result){
 
 var processReport=function(job,done){
 	var rpt=new Report(job.data);
-	console.log('proccessing report: ',rpt);
+	console.log('proccessing report: ',rpt._id);
 
 	rpt.save(function (err,doc) {
 		if(err) {
@@ -132,10 +130,11 @@ var processReport=function(job,done){
 
 				boardJob.on('complete',function(result){
 					++boardCompleteCount;
+					job.progress(boardCompleteCount,boardsCount,result);
 console.log('boardCompleteCount/boardsCount:',boardCompleteCount,boardsCount);
 					if(boardCompleteCount===boardsCount){
-						console.log('done with job!');
-						done(null,doc);
+						console.log('done with job!',done);
+						//job.complete(function(){ done(null,doc) });
 					}
 				});
 
