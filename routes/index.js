@@ -13,6 +13,7 @@ var TrelloProcessor=require('../trelloProcessor.js');
 var tp=new TrelloProcessor();
 
 var authRedirectPath='/oauth/authredirect';
+var authEndPath='/oauth/complete';
 
 
 /* GET home page. */
@@ -47,7 +48,7 @@ router.get('/me', function(req, res, next) {
 });
 
 router.get('/oauth',function(req,res,next){
-	var landing=(req.query.landing || '/');
+	var landing=(req.query.landing || authEndPath);
 	tp.oAuthTrello(req.protocol+'://'+req.headers.host+req.baseUrl+authRedirectPath+'?landing='+landing);	
 	tp.getRequestToken(function(err,redirectURL){
 		if(err){
@@ -58,6 +59,10 @@ router.get('/oauth',function(req,res,next){
 			res.redirect(redirectURL);
 		}
 	});
+});
+
+router.get(authEndPath,function(req,res,next){
+	res.json({ msg: 'oAuth success!'});
 });
 
 router.get(authRedirectPath,function(req,res){
@@ -91,7 +96,7 @@ router.post('/jobs', function(req, res, next) {
 		if(err){
 			res.status(500).json(err);
 		} else {
-			var job = queue.create('report',rpt).removeOnComplete(true).save( function(err){
+			var job = queue.create('report',rpt).removeOnComplete(false).save( function(err){
 				if(err) {
 					console.log(err);
 				} else {
@@ -102,6 +107,19 @@ router.post('/jobs', function(req, res, next) {
 			res.json(job);
 		}		
 	});
+});
+
+router.get('/clearkue/:state/:n',function(req,res){
+	kue.Job.rangeByState(req.params.state, 0, req.params.n, 'asc', function( err, jobs ) {
+		_.forEach(jobs, function( job ) {
+			job.remove( function(){
+				console.log('removed ', job.id );
+			});
+		});
+
+		res.json(jobs);
+	});
+
 });
 
 module.exports = router;
