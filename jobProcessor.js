@@ -145,12 +145,22 @@ console.log('boardCompleteCount/boardsCount:',boardCompleteCount,boardsCount);
 };
 
 queue.process('report', function(job, done){
-	job.on('complete', function(result){
-		console.log('Job completed with data ', result);
-		sendEmail(result);
-	});
-
 	processReport(job, done);
+});
+
+queue.on('job complete', function(id, result){
+	kue.Job.get(id, function(err, job){
+		if (err) return;
+
+		console.log('Job completed ', result);
+		sendEmail(result);
+/*		
+		job.remove(function(err){
+			if (err) throw err;
+			console.log('removed completed job #%d', job.id);
+		});
+*/
+	});
 });
 
 queue.process('board', function(job, done){
