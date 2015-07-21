@@ -14,9 +14,12 @@
     "kue": "latest",
     "mongoose": "latest",
     "express": "~4.12.2",
-    "hbs": "~2.9.0",
+    "express-session": "~1.11.3",
+    "hbs": "^3.0.0",
     "morgan": "~1.5.1",
     "serve-favicon": "~2.2.0",
-    "node-trello": "latest"
+    "node-trello": "latest",
+    "nodemailer": "1.4.0",
+    "nodemailer-express-handlebars": "1.0.0"
   }
 }

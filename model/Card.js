@@ -49,6 +49,11 @@ var CardSchema = new Schema({
 		required: true,
 		trim: true
 	},
+	boardName:{
+		type: String,
+		required: true,
+		trim: true
+	},
 	pubDate: {
 		type: Date,
 		default: Date.now

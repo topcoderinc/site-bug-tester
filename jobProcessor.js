@@ -3,6 +3,7 @@
 var config=require('config');
 var _=require('lodash');
 var TrelloProcessor=require('./trelloProcessor');
+var rb=new (require('./ReportBuilder'))();
 
 var kue=require('kue');
 var queue=kue.createQueue();
@@ -55,6 +56,7 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 				_.forEach(tCards,function(card){
 					var c=new Card(card); //CWD-- this won't work with Card.collection.insert()
 					c.report=reportId;
+					c.boardName=results.name;
 					cards.push(c);
 					console.log(c._id,c.name);
 				});
@@ -97,8 +99,24 @@ var processBoard=function(key,token,reportId,boardId,lists,done){
 	}
 };
 
-var sendEmail=function(result){
-	console.log('sending email: ',result);
+var sendEmail=function(doc){
+	console.log('building email for report: ',doc._id);
+
+//CWD-- query for data
+	rb.buildReport(doc,function(err, payload){
+		var subject=doc.name;
+		var to=doc.emailRecipient;
+console.log('sending payload:',payload);
+		rb.sendMail(to, subject, payload, function(err,data){
+			if(err) {
+				console.log(err);
+			} else {
+				console.log('email sent: ', data);
+			}
+		});
+	});
+
+
 };
 
 var processReport=function(job,done){
@@ -131,14 +149,13 @@ var processReport=function(job,done){
 				boardJob.on('complete',function(result){
 					++boardCompleteCount;
 					job.progress(boardCompleteCount,boardsCount,result);
-console.log('boardCompleteCount/boardsCount:',boardCompleteCount,boardsCount);
+					console.log('boardCompleteCount/boardsCount:',boardCompleteCount,'/',boardsCount);
+
 					if(boardCompleteCount===boardsCount){
 						console.log('done with report job!');
 						done(null,doc);
 					}
 				});
-
-				//CWD-- really should handle failures here too so we don't have zombies
 			});
 		}
 	});
@@ -149,11 +166,16 @@ queue.process('report', function(job, done){
 });
 
 queue.on('job complete', function(id, result){
+	console.log('result:',result);
 	kue.Job.get(id, function(err, job){
 		if (err) return;
 
-		console.log('Job completed ', result);
-		sendEmail(result);
+		console.log('Job completed: ',job.type);
+
+		if(job.type==='report'){
+			sendEmail(result);
+		}
+		
 /*		
 		job.remove(function(err){
 			if (err) throw err;
