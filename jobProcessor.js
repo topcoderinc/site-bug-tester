@@ -3,7 +3,7 @@
 var config=require('config');
 var _=require('lodash');
 var TrelloProcessor=require('./trelloProcessor');
-var rb=new (require('./ReportBuilder'))();
+var rb=new (require('./reportBuilder'))();
 
 var kue=require('kue');
 var queue=kue.createQueue({redis: config.REDIS_URL});
