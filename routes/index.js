@@ -7,7 +7,7 @@ var kue = require('kue');
 var TrelloProcessor=require('../trelloProcessor');
 
 
-var queue = kue.createQueue();
+var queue = kue.createQueue({redis: config.REDIS_URL});
 var router=express.Router();
 
 var Report=require('../model/Report.js');
