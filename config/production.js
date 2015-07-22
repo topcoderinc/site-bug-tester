@@ -13,5 +13,6 @@ config.EMAIL_PASS=process.env.EMAIL_PASS;
 config.EMAIL_FROM=process.env.EMAIL_FROM || 'no-reply@trellobaer.com';
 config.EMAIL_SUBJECT=process.env.EMAIL_SUBJECT || 'Trello Baer Report: ';
 config.EMAIL_TEMPLATE=process.env.EMAIL_TEMPLATE || 'email';
+config.REDIS_URL=process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 
 module.exports=config;
