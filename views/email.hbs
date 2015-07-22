@@ -1,0 +1,15 @@
+<div>{{reportName}}<div>
+
+<div>
+{{#each boards}}
+	<div>{{this.name}}</div>
+	<div>
+	{{#each this.cards}}
+	<div class="card">
+		<div class="cardTitle"><a href="{{this.shortUrl}}">{{this.name}}</a></div>
+		<div class="cardDesc">{{this.desc}}</div>
+	</div>
+	{{/each}}
+	</div>
+{{/each}}
+</div>

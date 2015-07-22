@@ -4,13 +4,13 @@ var config=require('config');
 var _=require('lodash');
 var express = require('express');
 var kue = require('kue');
+var TrelloProcessor=require('../trelloProcessor');
+
 
 var queue = kue.createQueue();
 var router=express.Router();
 
 var Report=require('../model/Report.js');
-var TrelloProcessor=require('../trelloProcessor.js');
-var tp=new TrelloProcessor();
 
 var authRedirectPath='/oauth/authredirect';
 var authEndPath='/oauth/complete';
@@ -19,6 +19,7 @@ var authEndPath='/oauth/complete';
 /* GET home page. */
 router.get('/me', function(req, res, next) {
 	var list=(req.query.list?req.query.list:'Done');
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
 
 	if(!tp.isAuthorized){
 		res.redirect('/oauth?landing=/me');
@@ -49,19 +50,26 @@ router.get('/me', function(req, res, next) {
 
 router.get('/oauth',function(req,res,next){
 	var landing=(req.query.landing || authEndPath);
-	tp.oAuthTrello(req.protocol+'://'+req.headers.host+req.baseUrl+authRedirectPath+'?landing='+landing);	
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
+	tp.oAuthTrello(req.protocol+'://'+req.headers.host+req.baseUrl+authRedirectPath+'?landing='+landing);
+	req.session.trello=tp;
+
 	tp.getRequestToken(function(err,redirectURL){
 		if(err){
 			res.status(500).json(err);
 		} else {
 			//res.json(redirectURL);
 			console.log('redirecting to:',redirectURL);
+			req.session.trello=tp;
 			res.redirect(redirectURL);
 		}
 	});
 });
 
 router.get(authEndPath,function(req,res,next){
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
 	if(!tp.isAuthorized){
 		res.redirect('/oauth');
 		return;
@@ -73,12 +81,15 @@ router.get(authEndPath,function(req,res,next){
 router.get(authRedirectPath,function(req,res){
 	var landing=(req.query.landing || '/');
 	console.log('calling for access token: ',req.query.oauth_verifier);
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
 	tp.getAccessToken(req.query.oauth_verifier, function(err,data){
 		if(err){
 			console.log(err);
 			res.status(500).json(err);
 		} else {
 			//res.json(data);
+			req.session.trello=tp;
 			res.redirect(landing);
 		}
 	});
@@ -86,6 +97,8 @@ router.get(authRedirectPath,function(req,res){
 });
 
 router.post('/jobs', function(req, res, next) {
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
 	if(!tp.isAuthorized){
 		res.status(500).json({ error: 'no oAuth tokens' });
 		return;
@@ -107,6 +120,10 @@ router.post('/jobs', function(req, res, next) {
 				} else {
 					console.log('posted report job: ',job.id );
 				}
+			});
+
+			job.on('complete',function(result){
+				console.log('job done!',result);
 			});
 
 			res.json(job);

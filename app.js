@@ -1,9 +1,13 @@
+'use strict';
+
 var express = require('express');
 var path = require('path');
+var session = require('express-session');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var TrelloProcessor=require('./trelloProcessor.js');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -11,6 +15,22 @@ var users = require('./routes/users');
 var app = express();
 var kue = require('kue');
 kue.app.listen(4000);
+
+//sessions
+app.use(session({
+  secret: 'trello baer',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(function (req, res, next) {
+  if(!req.session.trello){
+    console.log('creating new, empty TrelloProcessor object for session');
+    req.session.trello=new TrelloProcessor();
+  }
+
+  next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

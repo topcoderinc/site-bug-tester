@@ -1,1 +1,2 @@
-nodemon bin/www
+web: nodemon bin/www
+worker: nodeomon jobProcessor.js
