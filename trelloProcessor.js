@@ -31,16 +31,31 @@ TrelloProcessor.prototype.initTrello=function(key,token) {
 	return self;
 };
 
+TrelloProcessor.prototype.initFromSessionObject=function(sessionObj){
+	var self=this;
+	self.bag=sessionObj.bag;
+	self.isAuthorized=sessionObj.isAuthorized;
+	self.appName=sessionObj.appName;
+	
+	if(self.bag.api_key && self.bag.api_token){
+		self.trello=new Trello(self.bag.api_key,self.bag.api_token);
+	}
+	
+	self.oAuth=new Trello.OAuth(self.bag.api_key,self.bag.api_secret,self.bag.redirect,self.appName);
+	return self;
+};
+
 TrelloProcessor.prototype.oAuthTrello=function(loginCallback, key, secret, appName){
 	var self=this;
 	
 	self.isAuthorized=false;
+	self.appName=(appName || config.TRELLO_APPNAME);
 	self.bag.api_key=(key || config.TRELLO_KEY);
 	self.bag.api_secret=(secret || config.TRELLO_SECRET);
 	self.bag.redirect=loginCallback;
-	console.log('setting up oAuth with: ',self.bag.api_key,self.bag.api_secret,loginCallback,(appName || config.TRELLO_APPNAME));
+	console.log('setting up oAuth with: ',self.bag.api_key,self.bag.api_secret,loginCallback,self.appName);
 
-	self.oAuth=new Trello.OAuth(self.bag.api_key,self.bag.api_secret,self.bag.redirect,(appName || config.TRELLO_APPNAME));
+	self.oAuth=new Trello.OAuth(self.bag.api_key,self.bag.api_secret,self.bag.redirect,self.appName);
 };
 
 TrelloProcessor.prototype.getRequestToken=function(callback){
