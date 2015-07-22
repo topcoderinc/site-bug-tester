@@ -6,7 +6,7 @@ var TrelloProcessor=require('./trelloProcessor');
 var rb=new (require('./ReportBuilder'))();
 
 var kue=require('kue');
-var queue=kue.createQueue();
+var queue=kue.createQueue({redis: config.REDIS_URL});
 var mongoose=require('mongoose');
 
 var Report=require('./model/Report.js');
