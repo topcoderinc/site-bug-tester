@@ -1,2 +1,11 @@
 <h1>{{title}}</h1>
 <p>Welcome to {{title}}</p>
+
+
+<div>
+	{{#if trello.isAuthorized}}
+		<a href="/buildJob">Pick your Trello boards</a>
+	{{else}}
+		<a href="/oauth?landing=/">Please Authorize {{title}}</a>
+	{{/if}}
+</div>

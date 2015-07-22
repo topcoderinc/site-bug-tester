@@ -17,6 +17,32 @@ var authEndPath='/oauth/complete';
 
 
 /* GET home page. */
+router.get('/',function(req, res) {
+	var data={
+		title: config.TRELLO_APPNAME,
+		trello: req.session.trello
+	};
+
+	res.render('index',data);
+});
+
+router.get('/buildJob',function(req, res) {
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
+	if(!tp.isAuthorized){
+		res.redirect('/oauth?landing=/buildJob');
+		return;
+	}
+
+	var data={
+		title: config.TRELLO_APPNAME,
+		trello: tp
+	};
+
+	res.render('buildJob',data);
+});
+
+
 router.get('/me', function(req, res, next) {
 	var list=(req.query.list?req.query.list:'Done');
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
