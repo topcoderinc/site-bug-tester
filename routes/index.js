@@ -29,7 +29,19 @@ router.get('/',function(req, res) {
 router.get('/user',function(req, res){
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
 
-	res.json({ user: 'data goes here', isAuthenticated: tp.isAuthorized });
+	if(tp.isAuthorized){
+		tp.getMe(function(err,data){
+			if(err){
+				res.status(500).json(err);
+			} else {
+				req.session.user=data;
+				res.json({ user: req.session.user, isAuthenticated: tp.isAuthorized, err: '' });
+			}
+		});
+	} else {
+		res.json({ user: 'user not authenticated', isAuthenticated: tp.isAuthorized, err: 'not authenticated' });
+	}
+	
 });
 
 router.get('/buildJob',function(req, res) {
@@ -48,6 +60,31 @@ router.get('/buildJob',function(req, res) {
 	res.render('buildJob',data);
 });
 
+router.get('/boards', function(req, res, next) {
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
+	if(tp.isAuthorized){
+		tp.getMe(function(err,data){
+			if(err){
+				res.status(500).json(err);
+			} else {
+				var boards=data.boards;
+				var orgs=data.organizations;
+
+				_.forEach(boards,function(board){
+					var org=_.find(orgs,{ id: board.idOrganization});
+					board.nameOrganization=_.result(org,'name','');
+					board.displayNameOrganization=_.result(org,'displayName','');
+					console.log(board.nameOrganization);
+				});
+
+				res.json({ boards: boards, err: '' });
+			}
+		});
+	} else {
+		res.json({ boards: [], err: 'not authenticated'});
+	}
+});
 
 router.get('/me', function(req, res, next) {
 	var list=(req.query.list?req.query.list:'Done');
@@ -74,7 +111,7 @@ router.get('/me', function(req, res, next) {
 			if(err){
 				res.status(500).json(err);
 			} else {
-				res.session.user=data;
+				req.session.user=data;
 				res.json(data);
 			}
 		}
