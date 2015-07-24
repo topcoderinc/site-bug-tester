@@ -4,7 +4,7 @@
 		<org ng-repeat="org in organizations">
 			<li>
 				<div>{{org.displayName}}</div>
-				<trello-boards org="org" boards="boards"></trello-boards>
+				<trello-boards org="org" boards="org.boards"></trello-boards>
 			</li>
 		</org>
 	</ol>

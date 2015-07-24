@@ -27,6 +27,23 @@ angular.module('trelloBaerApp')
 			} else{
 				$scope.boards=data.boards;
 				$scope.organizations=data.organizations;
+				$scope.organizations.push({ id: null, name: 'personal', displayName: 'Personal' });
+
+				lodash.forEach(data.boards,function(board){
+					var org=lodash.find($scope.organizations,{ id: board.idOrganization});
+
+					if(org){
+						if(!lodash.has(org,'boards')){
+							org.boards=[];
+						}
+
+						org.boards.push(board);
+					} else {
+						console.log('no org for board!');
+						console.log(board);
+					}
+				});
+
 				console.log('data.organziations');
 				console.log(data.organizations);
 				console.log($scope.organizations);

@@ -1,1 +1,7 @@
-boards here for org
+<div>
+	<ul>
+		<li ng-repeat="board in boards" data-id="{{board.id}}">
+			<input type="checkbox" ng-model="selectedBoards" name="selectedBoards" required="" value="{{board.id}}" />{{board.name}}
+		</li>
+	</ul>
+</div>
