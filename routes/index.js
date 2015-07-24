@@ -26,6 +26,12 @@ router.get('/',function(req, res) {
 	res.render('index',data);
 });
 
+router.get('/user',function(req, res){
+	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
+
+	res.json({ user: 'data goes here', isAuthenticated: tp.isAuthorized });
+});
+
 router.get('/buildJob',function(req, res) {
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
 
@@ -68,6 +74,7 @@ router.get('/me', function(req, res, next) {
 			if(err){
 				res.status(500).json(err);
 			} else {
+				res.session.user=data;
 				res.json(data);
 			}
 		}
