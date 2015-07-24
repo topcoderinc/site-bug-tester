@@ -1,9 +1,10 @@
 <div>Build a report</div>
 
+<div ng-show="errorMsg">{{errorMsg}}</div>
 <div ng-hide="isAuthenticated">
 Looks like you've not authenticated with Trello yet. Do so <a href="/oAuth?landing=/index.html#/buildJarb">here</a>
 </div>
 
 <div ng-show="isAuthenticated">
-pull in boards here
+	<trello-organizations orgs="organizations" boards="boards"></trello-organizations>
 </div>

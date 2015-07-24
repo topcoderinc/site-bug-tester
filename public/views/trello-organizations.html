@@ -1,0 +1,11 @@
+<div>Organizations:</div>
+<div>
+	<ol>
+		<org ng-repeat="org in organizations">
+			<li>
+				<div>{{org.displayName}}</div>
+				<trello-boards org="org" boards="boards"></trello-boards>
+			</li>
+		</org>
+	</ol>
+</div>

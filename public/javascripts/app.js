@@ -15,7 +15,8 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'ngLodash'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -34,5 +35,14 @@ angular
       });
   })
   .factory('TrelloAPI', ['$resource',function($resource){
-    return $resource('/user');
+    return $resource('/',null,{
+      getUser: {
+        method: 'GET',
+        url: '/user'
+      },
+      getBoards: {
+        method: 'GET',
+        url: '/boards'   
+      }
+    });
   }]);

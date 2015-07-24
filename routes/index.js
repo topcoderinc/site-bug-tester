@@ -75,10 +75,9 @@ router.get('/boards', function(req, res, next) {
 					var org=_.find(orgs,{ id: board.idOrganization});
 					board.nameOrganization=_.result(org,'name','');
 					board.displayNameOrganization=_.result(org,'displayName','');
-					console.log(board.nameOrganization);
 				});
 
-				res.json({ boards: boards, err: '' });
+				res.json({ boards: boards, organizations: orgs, err: '' });
 			}
 		});
 	} else {
