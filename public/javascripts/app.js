@@ -32,4 +32,7 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-  });
+  })
+  .factory('TrelloAPI', ['$resource',function($resource){
+    return $resource('/user');
+  }]);

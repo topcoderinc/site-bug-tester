@@ -8,6 +8,12 @@
  * Controller of the trelloBaerApp
  */
 angular.module('trelloBaerApp')
-  .controller('BuildJarbController', function () {
-    this.isAuthenticated=false;
-  });
+  .controller('BuildJarbController', ['$scope','TrelloAPI', function ($scope,TrelloAPI) {
+    $scope.isAuthenticated=false;
+    
+    TrelloAPI.get(function(userData){
+    	console.log(userData);
+    	$scope.isAuthenticated=userData.isAuthenticated;
+
+    });
+  }]);
