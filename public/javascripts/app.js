@@ -24,7 +24,7 @@ angular
         controller: 'MainCtrl',
         controllerAs: 'main'
       })
-      .when('buildJarb',{
+      .when('/buildJarb',{
         templateUrl: 'views/buildJarb.html',
         controller: 'BuildJarbController',
         controllerAs: 'build'
