@@ -1,10 +1,10 @@
 <div>Organizations:</div>
 <div>
 	<ol>
-		<org ng-repeat="org in organizations">
+		<org ng-repeat="org in organizations| orderBy:displayName">
 			<li>
-				<div>{{org.displayName}}</div>
-				<trello-boards org="org" boards="org.boards"></trello-boards>
+				<div ng-model="collapsed" ng-click="collapsed=!collapsed">{{org.displayName}}</div>
+				<trello-boards ng-show="collapsed" org="org" boards="org.boards"></trello-boards>
 			</li>
 		</org>
 	</ol>

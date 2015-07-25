@@ -103,7 +103,7 @@ TrelloProcessor.prototype.getData=function(route,data,callback){
 };
 
 TrelloProcessor.prototype.getMe=function(callback){
-	this.getData('/'+V+'/members/me',{ cards: 'open', lists: 'open', boards: 'all',organizations: 'all'},callback);
+	this.getData('/'+V+'/members/me',{ cards: 'open', lists: 'open', boards: 'open',organizations: 'all'},callback);
 };
 
 TrelloProcessor.prototype.getCards=function(boardId,callback){

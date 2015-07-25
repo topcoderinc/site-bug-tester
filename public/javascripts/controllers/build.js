@@ -13,6 +13,7 @@ angular.module('trelloBaerApp')
 		$scope.isAuthenticated=false;
 		$scope.boards=[];
 		$scope.organizations=[];
+		$scope.formData = {};
 
 		TrelloAPI.getUser(function(userData){
 			console.log(userData);
@@ -63,6 +64,7 @@ angular.module('trelloBaerApp')
 	.directive('trelloBoards', function() {
 		return {
 			restrict: 'E',
+			transclude: true,
 			templateUrl: 'views/trello-boards.html',
 			scope: {
 				org: '=org',

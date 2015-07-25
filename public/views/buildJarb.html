@@ -6,5 +6,10 @@ Looks like you've not authenticated with Trello yet. Do so <a href="/oAuth?landi
 </div>
 
 <div ng-show="isAuthenticated">
-	<trello-organizations orgs="organizations" boards="boards"></trello-organizations>
+	<form novalidate class="simple-form">
+		<trello-organizations orgs="organizations" boards="boards"></trello-organizations>
+	</form>
+	 <pre>
+        {{ formData }}
+    </pre>
 </div>
