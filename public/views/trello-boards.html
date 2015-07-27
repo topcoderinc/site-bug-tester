@@ -1,7 +1,0 @@
-<div>
-	<ul>
-		<li ng-repeat="board in boards | orderBy:name" data-id="{{board.id}}">
-			<input type="checkbox" ng-model="formData.selectedBoards[board.id]" name="selectedBoards" value="{{board.id}}" />{{board.name}}
-		</li>
-	</ul>
-</div>

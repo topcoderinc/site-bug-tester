@@ -43,25 +43,4 @@ angular.module('trelloBaerApp')
 				});
 			}
 		});
-	}])
-	.directive('trelloOrganizations', function() {
-		return {
-			restrict: 'E',
-			templateUrl: 'views/trello-organizations.html',
-			scope: {
-				organizations: '=orgs',
-				boards: '=boards'
-			}
-		};
-	})
-	.directive('trelloBoards', function() {
-		return {
-			restrict: 'E',
-			transclude: true,
-			templateUrl: 'views/trello-boards.html',
-			scope: {
-				org: '=org',
-				boards: '=boards'
-			}
-		};
-	});
+	}]);
