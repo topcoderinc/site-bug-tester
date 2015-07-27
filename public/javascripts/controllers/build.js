@@ -16,13 +16,10 @@ angular.module('trelloBaerApp')
 		$scope.formData = {};
 
 		TrelloAPI.getUser(function(userData){
-			console.log(userData);
 			$scope.isAuthenticated=userData.isAuthenticated;
 		});
 
 		TrelloAPI.getBoards(function(data){
-			console.log(data);
-
 			if(data.err){
 				$scope.errorMsg=data.err;
 			} else{
@@ -44,10 +41,6 @@ angular.module('trelloBaerApp')
 						console.log(board);
 					}
 				});
-
-				console.log('data.organziations');
-				console.log(data.organizations);
-				console.log($scope.organizations);
 			}
 		});
 	}])
