@@ -6,8 +6,25 @@ Looks like you've not authenticated with Trello yet. Do so <a href="/oAuth?landi
 </div>
 
 <div ng-show="isAuthenticated">
-	<form novalidate class="simple-form">
-		<trello-organizations orgs="organizations" boards="boards"></trello-organizations>
+	<form novalidate class="simple-form">		
+		<div>Organizations:</div>
+		<div>
+			<ol>
+				<org ng-repeat="org in organizations| orderBy:displayName">
+					<li>
+						<div ng-model="collapsed" ng-click="collapsed=!collapsed">{{org.displayName}}</div>
+						<div ng-show="collapsed">
+							<ul>
+								<li ng-repeat="board in org.boards | orderBy:board.name" data-id="{{board.id}}">
+									<input type="checkbox" ng-model="formData.selectedBoards[board.id]" name="selectedBoards" value="{{board.id}}" />{{board.name}}
+								</li>
+							</ul>
+						</div>
+					</li>
+				</org>
+			</ol>
+		</div>
+
 	</form>
 	 <pre>
         {{ formData }}
