@@ -121,3 +121,27 @@ body {
 .view-animate.ng-leave.ng-leave-active {
   left:-100%;
 }
+
+.css-form {
+  background-color: rgb(217, 226, 244);
+  padding: 15px;
+}
+
+.css-form input.ng-invalid.ng-touched {
+  background-color: #FA787E;
+}
+
+.css-form input.ng-valid.ng-touched {
+  background-color: #78FA89;
+}
+
+.orgTitle {
+  cursor: pointer;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 5px;
+}
+
+label {
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 5px;
+}

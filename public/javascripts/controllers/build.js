@@ -15,6 +15,11 @@ angular.module('trelloBaerApp')
 		$scope.organizations=[];
 		$scope.formData = {};
 
+		$scope.postJob=function(){
+			console.log('posting job!');
+			console.log($scope.formData);
+		};
+
 		TrelloAPI.getUser(function(userData){
 			$scope.isAuthenticated=userData.isAuthenticated;
 		});
