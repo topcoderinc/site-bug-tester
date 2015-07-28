@@ -2,22 +2,36 @@
 
 <div ng-show="errorMsg">{{errorMsg}}</div>
 <div ng-hide="isAuthenticated">
-Looks like you've not authenticated with Trello yet. Do so <a href="/oAuth?landing=/index.html#/buildJarb">here</a>
+Looks like you've not authenticated with Trello yet. Do so <a href="/trello/oAuth?landing=/index.html#/buildJarb">here</a>
 </div>
 
 <div ng-show="isAuthenticated">
-	<form novalidate class="simple-form css-form" ng-submit="postJob()">
+	<form name="form" novalidate class="simple-form css-form" ng-submit="postJob()">
 		<div>
 			<fieldset>
-				<label for="recipient">Email address:</label>
-				<input type="email" ng-model="formData.recipient" name="recipient" id="recipient" required/>
+				<div>
+					<label for="emailRecipient">Email address:</label>
+					<input type="email" ng-model="formData.emailRecipient" name="emailRecipient" id="emailRecipient" required/>
+					<span class="requiredField">*</span>
+					<div ng-show="form.$submitted || form.emailRecipient.$touched">
+				    	<div ng-show="form.emailRecipient.$error.required">valid email required.</div>
+				    </div>
+				</div>
+				<div>
+					<label for="reportName">Report Name:</label>
+					<input type="text" ng-model="formData.reportName" name="reportName" id="reportName" required/>
+					<span class="requiredField">*</span>
+					<div ng-show="form.$submitted || form.reportName.$touched">
+				    	<div ng-show="form.reportName.$error.required">name required.</div>
+				    </div>
+				</div>
 			</fieldset>
 		</div>	
 		<fieldset>
 			<div><label>Organizations:</label></div>
 			<div>
 				<ol>
-					<org ng-repeat="org in organizations| orderBy:displayName">
+					<org ng-repeat="org in organizations| orderBy:org.displayName">
 						<li>
 							<div class="orgTitle" ng-model="collapsed" ng-click="collapsed=!collapsed">{{org.displayName}}</div>
 							<div ng-show="collapsed">
@@ -33,12 +47,15 @@ Looks like you've not authenticated with Trello yet. Do so <a href="/oAuth?landi
 			</div>
 		</fieldset>
 		<div>
-			<input type="submit" value="Create Report" />
+			<button type="submit" class="btn btn-success btn-lg btn-block" ng-disabled="form.$invalid">
+				<span class="glyphicon glyphicon-flash"></span> Create Report!
+			</button>			
 		</div>
 		
 		
 	</form>
 	 <pre>
         {{ formData }}
+        {{ job }}
     </pre>
 </div>

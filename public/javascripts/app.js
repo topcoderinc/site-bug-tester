@@ -35,14 +35,17 @@ angular
       });
   })
   .factory('TrelloAPI', ['$resource',function($resource){
-    return $resource('/',null,{
+    return $resource('/trello/',null,{
       getUser: {
         method: 'GET',
-        url: '/user'
+        url: '/trello/user'
       },
       getBoards: {
         method: 'GET',
-        url: '/boards'   
+        url: '/trello/boards'   
       }
     });
+  }])
+  .factory('JobsAPI', ['$resource',function($resource){
+    return $resource('/jobs');
   }]);

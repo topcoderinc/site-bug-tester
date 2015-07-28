@@ -8,16 +8,24 @@
  * Controller of the trelloBaerApp
  */
 angular.module('trelloBaerApp')
-	.controller('BuildJarbController', ['$scope','lodash','TrelloAPI', function ($scope,lodash,TrelloAPI) {
+	.controller('BuildJarbController', ['$scope','lodash','TrelloAPI','JobsAPI', function ($scope,lodash,TrelloAPI,JobsAPI) {
 		$scope.errorMsg='';
 		$scope.isAuthenticated=false;
 		$scope.boards=[];
 		$scope.organizations=[];
 		$scope.formData = {};
+		$scope.job={};
 
 		$scope.postJob=function(){
-			console.log('posting job!');
-			console.log($scope.formData);
+			var job=new JobsAPI();
+			job.boardIds=lodash.keys($scope.formData.selectedBoards);
+			job.organizationId='cwd'; //CWD-- this is sorta useless now
+			job.name=$scope.formData.reportName;
+			job.lists=['Done']; //CWD-- need to think about this one as well
+			job.emailRecipient=$scope.formData.emailRecipient;
+			job.$save()
+				.then(function(j){ console.log(j); $scope.job='report created successfully!'; })
+				.catch(function(e){ $scope.errorMsg=e; });
 		};
 
 		TrelloAPI.getUser(function(userData){
