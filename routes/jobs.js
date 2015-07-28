@@ -3,16 +3,23 @@
 var config=require('config');
 var _=require('lodash');
 var express = require('express');
-var kue = require('kue');
-
-var queue = kue.createQueue({redis: config.REDIS_URL});
 var router=express.Router();
+var kue = require('kue');
+var queue = kue.createQueue({redis: config.REDIS_URL});
+var TrelloProcessor=require('../trelloProcessor');
+
 
 var Report=require('../model/Report.js');
 
 
-router.get('/', function(req,res){
-	res.json({ msg: 'jobs here man'});
+router.get('/:state?/:n?', function(req,res){
+	var n=req.params.n || 100;
+	var state=req.params.state || 'active'
+
+	kue.Job.rangeByState(state, 0, n, 'asc', function( err, jobs ) {
+		res.json(jobs);
+	});
+
 });
 
 router.post('/', function(req, res, next) {
@@ -45,7 +52,7 @@ router.post('/', function(req, res, next) {
 				console.log('job done!',result);
 			});
 
-			res.json(job);
+			res.json({ id: job.id });
 		}		
 	});
 });
