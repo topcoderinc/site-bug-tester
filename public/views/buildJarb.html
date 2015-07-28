@@ -1,0 +1,61 @@
+<div class="header"><h3>Build a report</h3></div>
+
+<div ng-show="errorMsg">{{errorMsg}}</div>
+<div ng-hide="isAuthenticated">
+Looks like you've not authenticated with Trello yet. Do so <a href="/trello/oAuth?landing=/index.html#/buildJarb">here</a>
+</div>
+
+<div ng-show="isAuthenticated">
+	<form name="form" novalidate class="simple-form css-form" ng-submit="postJob()">
+		<div>
+			<fieldset>
+				<div>
+					<label for="emailRecipient">Email address:</label>
+					<input type="email" ng-model="formData.emailRecipient" name="emailRecipient" id="emailRecipient" required/>
+					<span class="requiredField">*</span>
+					<div ng-show="form.$submitted || form.emailRecipient.$touched">
+				    	<div ng-show="form.emailRecipient.$error.required">valid email required.</div>
+				    </div>
+				</div>
+				<div>
+					<label for="reportName">Report Name:</label>
+					<input type="text" ng-model="formData.reportName" name="reportName" id="reportName" required/>
+					<span class="requiredField">*</span>
+					<div ng-show="form.$submitted || form.reportName.$touched">
+				    	<div ng-show="form.reportName.$error.required">name required.</div>
+				    </div>
+				</div>
+			</fieldset>
+		</div>	
+		<fieldset>
+			<div><label>Organizations:</label></div>
+			<div>
+				<ol>
+					<org ng-repeat="org in organizations| orderBy:org.displayName">
+						<li>
+							<div class="orgTitle" ng-model="collapsed" ng-click="collapsed=!collapsed">{{org.displayName}}</div>
+							<div ng-show="collapsed">
+								<ul>
+									<li ng-repeat="board in org.boards | orderBy:board.name" data-id="{{board.id}}">
+										<input type="checkbox" ng-model="formData.selectedBoards[board.id]" name="selectedBoards" value="{{board.id}}" />{{board.name}}
+									</li>
+								</ul>
+							</div>
+						</li>
+					</org>
+				</ol>
+			</div>
+		</fieldset>
+		<div>
+			<button type="submit" class="btn btn-success btn-lg btn-block" ng-disabled="form.$invalid">
+				<span class="glyphicon glyphicon-flash"></span> Create Report!
+			</button>			
+		</div>
+		
+		
+	</form>
+	 <pre>
+        {{ formData }}
+        {{ job }}
+    </pre>
+</div>
