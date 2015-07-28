@@ -1,14 +1,14 @@
 'use strict';
 
-var config=require('config');
 var _=require('lodash');
 var express = require('express');
 var TrelloProcessor=require('../trelloProcessor');
 
 var router=express.Router();
 
-var authRedirectPath='/oauth/authredirect';
-var authEndPath='/oauth/complete';
+var oAuthPath='/oauth';
+var oAuthRedirectPath='/oauth/authredirect';
+var oAuthEndPath='/oauth/complete';
 
 
 router.get('/user',function(req, res){
@@ -27,22 +27,6 @@ router.get('/user',function(req, res){
 		res.json({ user: 'user not authenticated', isAuthenticated: tp.isAuthorized, err: 'not authenticated' });
 	}
 	
-});
-
-router.get('/buildJob',function(req, res) {
-	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
-
-	if(!tp.isAuthorized){
-		res.redirect('/oauth?landing=/buildJob');
-		return;
-	}
-
-	var data={
-		title: config.TRELLO_APPNAME,
-		trello: tp
-	};
-
-	res.render('buildJob',data);
 });
 
 router.get('/boards', function(req, res, next) {
@@ -75,7 +59,7 @@ router.get('/me', function(req, res, next) {
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
 
 	if(!tp.isAuthorized){
-		res.redirect('/oauth?landing=/me');
+		res.redirect(req.baseUrl+oAuthPath+'?landing=/me');
 		return;
 	}
 
@@ -102,11 +86,11 @@ router.get('/me', function(req, res, next) {
 	});
 });
 
-router.get('/oauth',function(req,res,next){
-	var landing=(req.query.landing || authEndPath);
+router.get(oAuthPath,function(req,res,next){
+	var landing=(req.query.landing || oAuthEndPath);
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
 
-	tp.oAuthTrello(req.protocol+'://'+req.headers.host+req.baseUrl+authRedirectPath+'?landing='+landing);
+	tp.oAuthTrello(req.protocol+'://'+req.headers.host+req.baseUrl+oAuthRedirectPath+'?landing='+landing);
 	req.session.trello=tp;
 
 	tp.getRequestToken(function(err,redirectURL){
@@ -121,18 +105,18 @@ router.get('/oauth',function(req,res,next){
 	});
 });
 
-router.get(authEndPath,function(req,res,next){
+router.get(oAuthEndPath,function(req,res,next){
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
 
 	if(!tp.isAuthorized){
-		res.redirect('/oauth');
+		res.redirect(req.baseUrl+oAuthPath);
 		return;
 	}
 
 	res.json({ msg: 'oAuth success!'});
 });
 
-router.get(authRedirectPath,function(req,res){
+router.get(oAuthRedirectPath,function(req,res){
 	var landing=(req.query.landing || '/');
 	console.log('calling for access token: ',req.query.oauth_verifier);
 	var tp=new TrelloProcessor().initFromSessionObject(req.session.trello);
