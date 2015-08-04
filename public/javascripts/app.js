@@ -30,6 +30,11 @@ angular
         controller: 'BuildJarbController',
         controllerAs: 'build'
       })
+      .when('/jarbs',{
+        templateUrl: 'views/jarbs.html',
+        controller: 'JarbsController',
+        controllerAs: 'jarbs'
+      })
       .otherwise({
         redirectTo: '/'
       });
@@ -47,5 +52,6 @@ angular
     });
   }])
   .factory('JobsAPI', ['$resource',function($resource){
-    return $resource('/jobs');
+    return $resource('/jobs/:state/:n',
+      { state: '@state', n: '@n'});
   }]);

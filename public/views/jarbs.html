@@ -1,0 +1,41 @@
+<div class="header"><h3>Report Jobs</h3></div>
+
+<div ng-show="errorMsg">{{errorMsg}}</div>
+<div ng-hide="isAuthenticated">
+Looks like you've not authenticated with Trello yet. Do so <a href="/trello/oAuth?landing=/index.html#/jarbs">here</a>
+</div>
+
+<div ng-show="true"> <!-- isAuthenticated -->
+	<div>
+		<div>
+			<div class="orgTitle" ng-model="collapsedComplete" ng-click="collapsedComplete=!collapsedComplete">Completed</div>
+			<div ng-show="collapsedComplete">
+				<ol>
+					<li ng-repeat="job in completedJobs| orderBy: job.created_at : reverse">
+						<div>id: {{job.id}} / {{job.data._id}}</div>
+						<div>created: {{job.created_at | date : 'medium'}}</div>
+						<div>report: {{job.data.name}}</div>
+					</li>
+				</ol>
+				<div ng-if="completedJobs.length == 0">
+					Sorry No Completed Jobs 
+				</div>
+			</div>
+		</div>
+		<div>
+			<div class="orgTitle" ng-model="collapsedActive" ng-click="collapsedActive=!collapsedActive">Active</div>
+			<div ng-show="collapsedActive">
+				<ol>
+					<li ng-repeat="job in activeJobs| orderBy: job.created_at : reverse">
+						<div>id: {{job.id}} / {{job.data._id}}</div>
+						<div>created: {{job.created_at | date : 'medium'}}</div>
+						<div>report: {{job.data.name}}</div>
+					</li>
+				</ol>
+				<div ng-if="activeJobs.length == 0">
+					Sorry No Active Jobs 
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
