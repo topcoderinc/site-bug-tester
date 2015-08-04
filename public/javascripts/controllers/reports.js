@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name trelloBaerApp.controller:JarbsController
+ * @name trelloBaerApp.controller:ReportsController
  * @description
- * # JarbsController
+ * # ReportsController
  * Controller of the trelloBaerApp
  */
 angular.module('trelloBaerApp')
-	.controller('JarbsController', ['$scope','lodash','TrelloAPI','JobsAPI', function ($scope,lodash,TrelloAPI,JobsAPI) {
+	.controller('ReportsController', ['$scope','lodash','TrelloAPI','Reports', function ($scope,lodash,TrelloAPI,Reports) {
 		$scope.errorMsg='';
 		$scope.isAuthenticated=false;
 		$scope.completedJobs={};
@@ -18,6 +18,5 @@ angular.module('trelloBaerApp')
 			$scope.isAuthenticated=userData.isAuthenticated;
 		});
 
-		$scope.activeJobs=JobsAPI.query({ state: 'active', n: 100});
-		$scope.completedJobs=JobsAPI.query({ state: 'complete', n: 100});
+		$scope.reports=Reports.query();
 	}]);
