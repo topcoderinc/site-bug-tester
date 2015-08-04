@@ -31,7 +31,7 @@ Looks like you've not authenticated with Trello yet. Do so <a href="/trello/oAut
 			<div><label>Organizations:</label></div>
 			<div>
 				<ol>
-					<div ng-repeat="org in organizations| orderBy:org.displayName">
+					<div ng-repeat="org in organizations| orderBy: org.displayName">
 						<li>
 							<div class="orgTitle" ng-model="collapsed" ng-click="collapsed=!collapsed">{{org.displayName}}</div>
 							<div ng-show="collapsed">
