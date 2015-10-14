@@ -107,7 +107,7 @@ TrelloProcessor.prototype.getMe=function(callback){
 };
 
 TrelloProcessor.prototype.getCards=function(boardId,callback){
-	this.getData('/'+V+'/board/'+boardId,{ cards: 'open', lists: 'open', boards: 'all',organizations: 'all'},callback);
+	this.getData('/'+V+'/board/'+boardId,{ members: 'all',  cards: 'open', lists: 'open', boards: 'all',organizations: 'all'},callback);
 };
 
 
