@@ -14,7 +14,7 @@
     "kue": "latest",
     "mongoose": "latest",
     "express": "~4.12.2",
-    "express-session": "~1.11.3",
+    "express-session": "~1.17.2",
     "hbs": "^3.0.0",
     "morgan": "~1.5.1",
     "serve-favicon": "~2.2.0",
