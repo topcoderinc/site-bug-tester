@@ -13,7 +13,7 @@
     "lodash": "latest",
     "kue": "latest",
     "mongoose": "latest",
-    "express": "~4.12.2",
+    "express": "~4.17.1",
     "express-session": "~1.11.3",
     "hbs": "^3.0.0",
     "morgan": "~1.5.1",
